@@ -1,12 +1,14 @@
-const CACHE = 'penemue-v4';
+const CACHE = 'penemue-v6';
 const SHELL_ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './assets/css/style.css?v=4',
-  './assets/js/app.js?v=4',
+  './assets/css/style.css?v=6',
+  './assets/js/app.js?v=6',
   './assets/js/github-store.js',
   './assets/js/tasks.js',
+  './assets/js/dates.js',
+  './assets/js/sidework.js',
   './assets/icons/icon-180.png',
   './assets/icons/icon-192.png',
   './assets/icons/icon-512.png'
