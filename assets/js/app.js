@@ -6,7 +6,7 @@ import { createCollect, parseCollect, serializeCollect } from './collect.js';
 import { createTopic, parseTopics, serializeTopics } from './topics.js';
 import { updateProjectNextStep } from './projects.js';
 
-const APP_VERSION = '11';
+const APP_VERSION = '12';
 const navItems = [['projects', '项目看板', '看板'], ['inbox', '收集箱', '收集'], ['tasks', '待办', '待办'], ['side', '副业', '副业'], ['topics', '选题', '选题'], ['calendar', '日历', '日历'], ['settings', '设置', '设置']];
 const tokenInput = document.querySelector('#token'); const result = document.querySelector('#result');
 const tasksStatus = document.querySelector('#tasks-status'); const sideworkStatus = document.querySelector('#sidework-status'); const collectStatus = document.querySelector('#collect-status'); const topicsStatus = document.querySelector('#topics-status');
