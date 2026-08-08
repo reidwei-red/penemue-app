@@ -49,7 +49,12 @@ export function safeSideworkTitle(title) {
 }
 
 export function sideworkFilename(created, title, existingPaths = []) {
-  const stem = `sidework/${created}-${safeSideworkTitle(title)}`;
+  return markdownFilename('sidework', created, title, existingPaths);
+}
+
+// 副业单和笔记共用同一套安全化与重名规则，避免两处文件名表现分叉。
+export function markdownFilename(directory, created, title, existingPaths = []) {
+  const stem = `${directory}/${created}-${safeSideworkTitle(title)}`;
   const taken = new Set(existingPaths);
   let candidate = `${stem}.md`;
   let index = 2;
