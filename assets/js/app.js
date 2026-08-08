@@ -1,6 +1,7 @@
 import { listFiles, parseFrontmatter, readFile, writeFile } from './github-store.js';
 import { createTask, parseTasks, serializeTasks } from './tasks.js';
 
+const APP_VERSION = '3';
 const navItems = [['projects', '项目看板', '看板'], ['inbox', '收集箱', '收集'], ['tasks', '待办', '待办'], ['side', '副业', '副业'], ['topics', '选题', '选题'], ['calendar', '日历', '日历'], ['settings', '设置', '设置']];
 const tokenInput = document.querySelector('#token');
 const result = document.querySelector('#result');
@@ -49,7 +50,10 @@ async function saveTasks() { if (!requireToken(tasksStatus)) return; showStatus(
   } catch (error) { showStatus(tasksStatus, error.message || String(error), 'error'); } }
 function updateTask(task, changes) { Object.assign(task, changes); saveTasks(); }
 
-createNav(); tokenInput.value = localStorage.getItem('penemue-github-token') || '';
+createNav(); document.querySelector('#app-version').textContent = APP_VERSION; tokenInput.value = localStorage.getItem('penemue-github-token') || '';
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch((error) => console.error('Service Worker 注册失败：', error)));
+}
 tokenInput.addEventListener('input', () => localStorage.setItem('penemue-github-token', tokenInput.value.trim()));
 document.addEventListener('click', (event) => { const button = event.target.closest('.nav-button'); if (!button) return; switchView(button.dataset.target); if (button.dataset.target === 'tasks') loadTasks(); });
 document.querySelector('#load-projects-button').addEventListener('click', loadProjects);
