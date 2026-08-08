@@ -1,7 +1,7 @@
 import { listFiles, parseFrontmatter, readFile, writeFile } from './github-store.js';
 import { createTask, parseTasks, serializeTasks } from './tasks.js';
 
-const APP_VERSION = '3';
+const APP_VERSION = '4';
 const navItems = [['projects', '项目看板', '看板'], ['inbox', '收集箱', '收集'], ['tasks', '待办', '待办'], ['side', '副业', '副业'], ['topics', '选题', '选题'], ['calendar', '日历', '日历'], ['settings', '设置', '设置']];
 const tokenInput = document.querySelector('#token');
 const result = document.querySelector('#result');
@@ -57,6 +57,11 @@ if ('serviceWorker' in navigator) {
 tokenInput.addEventListener('input', () => localStorage.setItem('penemue-github-token', tokenInput.value.trim()));
 document.addEventListener('click', (event) => { const button = event.target.closest('.nav-button'); if (!button) return; switchView(button.dataset.target); if (button.dataset.target === 'tasks') loadTasks(); });
 document.querySelector('#load-projects-button').addEventListener('click', loadProjects);
+document.addEventListener('focusin', (event) => {
+  if (!event.target.matches('input:not([type="checkbox"]), select, textarea')) return;
+  // 等 iOS 键盘和系统导航栏出现后再定位，避免焦点控件被遮住。
+  window.setTimeout(() => event.target.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'smooth' }), 300);
+});
 document.querySelector('#new-task-form').addEventListener('submit', (event) => { event.preventDefault(); if (!requireToken(tasksStatus)) return; const data = new FormData(event.currentTarget); tasks.push(createTask({ title: data.get('title'), dueDate: data.get('dueDate'), category: data.get('category'), priority: data.get('priority') })); event.currentTarget.reset(); saveTasks(); });
 document.querySelector('#clear-token-button').addEventListener('click', () => { localStorage.removeItem('penemue-github-token'); tokenInput.value = ''; showStatus(result, '已清除这台设备浏览器保存的 token。'); });
 document.querySelector('#write-button').addEventListener('click', async () => { if (!requireToken(result)) return; try { const existing = await readFile('test.md'); const content = `Penemue 阶段 0 写入测试。\n写入时间：${new Date().toISOString()}（UTC）。\n这段中文用于验证 UTF-8 Base64 编码没有乱码。\n`; const data = await writeFile('test.md', content, existing?.sha); showStatus(result, `写入成功。\n提交：${data?.commit?.sha || 'GitHub 未返回提交 sha。'}`, 'success'); } catch (error) { showStatus(result, error.message || String(error), 'error'); } });
