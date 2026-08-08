@@ -1,0 +1,7 @@
+# 系统文件
+.DS_Store
+
+# 任务书与施工指令：只留本地供 Codex 阅读，永不推上公开仓
+# （同 v1 里 inbox.md 的思路：gitignore 挡的是 GitHub，不挡本地文件系统）
+Penemue-v2-任务书.md
+阶段0-Codex指令.md
