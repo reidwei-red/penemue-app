@@ -17,27 +17,37 @@ function createHeaders() {
   };
 }
 
-// 把常见 HTTP 状态翻成便于排查的中文提示。
-function explainStatus(status) {
-  const explanations = {
-    401: 'token 无效或已过期。',
-    403: '权限不足或触发限流。',
-    404: '文件或目录不存在，或者 token 未被授权访问这个仓库。',
-    409: 'sha 冲突：文件已被别处改动，请重试。'
-  };
-  return explanations[status] || 'GitHub 未完成这次请求，请查看原始 message。';
-}
-
-// 从失败响应中尽量读取 GitHub 的原始 message，读取失败时也保留说明。
-async function readError(response) {
+// 将失败响应翻成「给使用者看的说明」与保留的原始信息；403 必须依据响应头区分限流。
+export async function describeResponseError(response) {
   let payload = {};
   try {
     payload = await response.json();
   } catch (_) {
     payload = { message: 'GitHub 返回的内容不是 JSON，无法读取详细信息。' };
   }
-  return `HTTP ${response.status}：${payload.message || 'GitHub 未提供 message。'}\n${explainStatus(response.status)}`;
+  const remaining = response.headers.get('x-ratelimit-remaining');
+  const reset = Number(response.headers.get('x-ratelimit-reset'));
+  let userMessage = 'GitHub 没有完成这次操作，请稍后再试。';
+  if (response.status === 401) userMessage = '登录凭证失效了，可能是过期。去设置页重新填一次。';
+  if (response.status === 403 && remaining === '0') {
+    const minutes = Number.isFinite(reset) ? Math.max(1, Math.ceil((reset * 1000 - Date.now()) / 60000)) : 1;
+    userMessage = `操作太频繁，GitHub 暂时限流了。约 ${minutes} 分钟后恢复。`;
+  } else if (response.status === 403) userMessage = '这个凭证没有写入权限。检查 token 是否勾了 Contents 读写。';
+  if (response.status === 404) userMessage = '找不到这个文件或仓库。检查 token 是否授权了 penemue 这个仓。';
+  if (response.status >= 500) userMessage = 'GitHub 那边出问题了，不是你的操作有误。稍后重试。';
+  if (response.status === 409) userMessage = '这个文件在别处被改过了。你打开之后，Obsidian 或另一台设备也改了它。直接保存会覆盖掉那边的改动。';
+  return { status: response.status, userMessage, rawMessage: payload.message || 'GitHub 未提供 message。' };
 }
+
+export class GitHubRequestError extends Error {
+  constructor(details) {
+    super(`${details.userMessage}\n原始信息：HTTP ${details.status}：${details.rawMessage}`);
+    this.name = 'GitHubRequestError';
+    Object.assign(this, details);
+  }
+}
+
+async function throwResponseError(response) { throw new GitHubRequestError(await describeResponseError(response)); }
 
 // 统一处理请求、认证和非成功响应，避免三个公开函数各写一遍。
 async function request(path, options = {}) {
@@ -69,7 +79,7 @@ export function decodeBase64Utf8(base64) {
 export async function listFiles(dir) {
   const response = await request(dir);
   if (response.status === 404) return [];
-  if (!response.ok) throw new Error(await readError(response));
+  if (!response.ok) await throwResponseError(response);
 
   const entries = await response.json();
   if (!Array.isArray(entries)) return [];
@@ -82,7 +92,7 @@ export async function listFiles(dir) {
 export async function readFile(path) {
   const response = await request(path);
   if (response.status === 404) return null;
-  if (!response.ok) throw new Error(await readError(response));
+  if (!response.ok) await throwResponseError(response);
 
   const file = await response.json();
   return { text: decodeBase64Utf8(file.content || ''), sha: file.sha };
@@ -101,7 +111,7 @@ export async function writeFile(path, content, sha) {
     method: 'PUT',
     body: JSON.stringify(body)
   });
-  if (!response.ok) throw new Error(await readError(response));
+  if (!response.ok) await throwResponseError(response);
   return response.json();
 }
 
