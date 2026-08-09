@@ -21,6 +21,9 @@ export function parseTasks(text) {
     let title = match[3];
     let priority = '';
     let category = '';
+    let plannedDate = '';
+    const plannedMatch = title.match(/ ~(\d{4}-\d{2}-\d{2})$/);
+    if (plannedMatch) { plannedDate = plannedMatch[1]; title = title.slice(0, -plannedMatch[0].length); }
     const priorityMatch = title.match(/ !([高中低])$/);
     if (priorityMatch) { priority = priorityMatch[1]; title = title.slice(0, -priorityMatch[0].length); }
     const categoryMatch = title.match(/ @([^\s!]+)$/);
@@ -35,7 +38,8 @@ export function parseTasks(text) {
       dueDate: match[2] || '',
       title,
       category,
-      priority
+      priority,
+      plannedDate
     };
   });
 }
@@ -47,6 +51,7 @@ function taskLine(task) {
   parts.push(task.title);
   if (task.category.trim()) parts.push(`@${task.category.trim().replace(/^@/, '')}`);
   if (task.priority) parts.push(`!${task.priority.replace(/^!/, '')}`);
+  if (task.plannedDate) parts.push(`~${task.plannedDate}`);
   return parts.join(' ');
 }
 
@@ -61,6 +66,6 @@ export function serializeTasks(records) {
 
 export function createTask(fields = {}) {
   return {
-    kind: 'task', raw: '', ending: '\n', completed: false, dueDate: '', title: '', category: '', priority: '', ...fields
+    kind: 'task', raw: '', ending: '\n', completed: false, dueDate: '', title: '', category: '', priority: '', plannedDate: '', ...fields
   };
 }
