@@ -202,6 +202,10 @@ button:disabled { cursor: wait; opacity: .6; }
 .panel + .panel { margin-top: 12px; }
 
 .toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; }
+.quick-task-form { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; }
+.quick-task-preview { flex: 1 0 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding-top: 10px; border-top: 1px solid var(--line); color: var(--text-soft); }
+.quick-task-preview p { margin: 0; }
+.quick-task-preview .secondary { margin-left: auto; }
 .field { display: grid; gap: 4px; color: var(--text-soft); font-size: 13px; }
 .field.grow { flex: 1 1 260px; }
 .field input,
@@ -421,6 +425,8 @@ button:focus-visible { border-color: var(--gold); box-shadow: 0 0 0 3px var(--go
   .bottom-tabs .nav-button { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 6px 2px; font-size: 12px; text-align: center; white-space: nowrap; }
   .bottom-tabs .nav-button.active::before { top: auto; right: 20%; bottom: 0; left: 20%; width: auto; height: 3px; border-radius: 2px 2px 0 0; }
   .toolbar .primary { width: 100%; }
+  .quick-task-form .primary { width: 100%; }
+  .quick-task-preview .secondary { width: 100%; margin-left: 0; }
 }
 
 @media (hover: none) and (pointer: coarse) { input, select, textarea { font-size: 16px; } }
