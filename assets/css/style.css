@@ -1,21 +1,28 @@
 :root {
-  --bg: #070B14;
-  --bg-elev: #0D1422;
-  --bg-elev-2: #131C2E;
-  --bg-input: #050810;
-  --gold: #D9A441;
-  --gold-bright: #F0C87A;
-  --gold-dim: #8A6B2E;
-  --gold-line: rgba(217, 164, 65, .16);
-  --gold-glow: rgba(217, 164, 65, .28);
+  --bg: #070A10;
+  --bg-elev: #0E1219;
+  --bg-elev-2: #151A23;
+  --bg-elev-3: #1C222D;
+  --bg-input: #05070B;
+  --gold: #F0B450;
+  --gold-bright: #FFCF80;
+  --gold-dim: #8A6B33;
+  --gold-line: rgba(240, 180, 80, .16);
+  --gold-glow: rgba(240, 180, 80, .26);
   --crystal: #7FA8C9;
   --crystal-dim: #4A6A85;
-  --text: #E8EDF5;
-  --text-soft: #A8B4C6;
-  --text-mute: #6B7889;
-  --danger: #E0722F;
-  --warn: #D9A441;
-  --ok: #5C9E7A;
+  --text: #F2F5F9;
+  --text-soft: #A9B4C4;
+  --text-mute: #6B7686;
+  --danger: #F0574D;
+  --warn: #F0B450;
+  --ok: #4CC38A;
+  --on-gold: #1C1507;
+  --panel-border: rgba(240, 180, 80, .18);
+  --panel-bg: rgba(14, 18, 25, .62);
+  --shadow: rgba(0, 0, 0, .42);
+  --inset-line: rgba(255, 255, 255, .05);
+  --crystal-wash: rgba(127, 168, 201, .03);
   --line: rgba(255, 255, 255, .07);
   --line-strong: rgba(255, 255, 255, .12);
   --veil-top: .94;
@@ -225,7 +232,7 @@ button:focus-visible { border-color: var(--gold); box-shadow: 0 0 0 3px var(--go
 
 .primary {
   border-color: var(--gold);
-  color: #1c1507;
+  color: var(--on-gold);
   background: linear-gradient(180deg, var(--gold-bright), var(--gold));
   box-shadow: 0 2px 12px rgba(217, 164, 65, .22), inset 0 1px 0 rgba(255, 255, 255, .25);
 }
@@ -243,7 +250,7 @@ button:focus-visible { border-color: var(--gold); box-shadow: 0 0 0 3px var(--go
 .task-row select { width: 100%; min-height: 36px; padding: 6px; border: 1px solid var(--line-strong); border-radius: 6px; color: var(--text-soft); background: var(--bg-input); }
 .due-label, .task-expand-button { display: none; }
 .task-today-button { min-height: 36px; padding: 6px 10px; border: 1px solid var(--gold-line); border-radius: 6px; color: var(--gold); background: transparent; white-space: nowrap; }
-.task-today-button.selected { color: #1c1507; background: var(--gold); }
+.task-today-button.selected { color: var(--on-gold); background: var(--gold); }
 .icon-button { width: 40px; height: 40px; border: 0; border-radius: 6px; color: var(--text-mute); background: transparent; font-size: 20px; }
 .icon-button:hover { color: var(--danger); background: rgba(224, 114, 47, .08); }
 
@@ -349,6 +356,7 @@ button:focus-visible { border-color: var(--gold); box-shadow: 0 0 0 3px var(--go
 .today-content { display: grid; gap: 12px; }
 .today-content .deadline-panel { margin-bottom: 0; }
 .today-content h2 { margin: 0 0 12px; font-size: 18px; }
+.title-icon { width: 16px; height: 16px; margin-right: 7px; color: var(--gold); fill: none; stroke: currentColor; stroke-width: 1.5; vertical-align: -2px; }
 .today-plans { min-height: 116px; }
 .today-task-row { display: flex; align-items: center; gap: 10px; min-height: 42px; padding: 8px 0; border-top: 1px solid var(--line); color: var(--text); }
 .today-task-row input { width: 20px; height: 20px; accent-color: var(--ok); }
@@ -431,3 +439,22 @@ button:focus-visible { border-color: var(--gold); box-shadow: 0 0 0 3px var(--go
 @media (prefers-reduced-motion: no-preference) {
   button, input, select { transition: color 180ms ease-out, background-color 180ms ease-out, border-color 180ms ease-out, box-shadow 180ms ease-out, transform 180ms ease-out; }
 }
+
+/* 阶段 11：摘要优先，编辑控件只在用户展开后出现。 */
+.project-summary, .sidework-summary { display: flex; align-items: center; gap: 10px; }
+.project-summary h2, .sidework-summary h2 { flex: 1; margin-bottom: 0; }
+.summary-badge { display: inline-block; padding: 2px 7px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--text-soft); background: var(--bg-elev-3); font-size: 12px; line-height: 1.45; white-space: nowrap; }
+.project-next-summary, .project-commit-summary, .sidework-summary-meta { overflow: hidden; margin: 10px 0 0; color: var(--text-soft); text-overflow: ellipsis; white-space: nowrap; }
+.project-commit-summary, .sidework-summary-meta { color: var(--text-mute); font-size: 13px; }
+.disclosure-button, .task-expand-button { min-height: 32px; padding: 5px 8px; border: 0; color: var(--gold); background: transparent; white-space: nowrap; }
+.project-details, .sidework-details { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.project-card.expanded .project-details, .sidework-card.expanded .sidework-details { display: block; animation: disclose 180ms ease-out; }
+.sidework-summary-meta { flex: 1; margin: 0; text-align: right; }
+.task-row { grid-template-columns: 32px minmax(150px, 1fr) auto 44px; }
+.task-summary-meta { display: flex; gap: 5px; min-width: 0; }
+.task-row .due, .task-row .category, .task-row .priority, .task-row .task-today-button, .task-row .icon-button { display: none; }
+.task-row.expanded { grid-template-columns: 32px minmax(150px, 1fr) auto 44px; }
+.task-row.expanded .due, .task-row.expanded .category, .task-row.expanded .priority, .task-row.expanded .task-today-button { display: block; grid-column: 2 / 5; }
+.task-row.expanded .icon-button { display: block; grid-column: 4; }
+@keyframes disclose { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .project-card, .sidework-card, .task-row { transition: none; } .project-card.expanded .project-details, .sidework-card.expanded .sidework-details { animation: none; } }
