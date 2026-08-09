@@ -1,7 +1,7 @@
 // collect.md 的逐行解析与序列化；标题、引用和杂记等未知行必须原样保留。
 const collectPattern = /^- \[([ x])\] (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) (.+)$/;
 
-function splitLinesKeepingEndings(text) {
+export function splitLinesKeepingEndings(text) {
   const pieces = [];
   const matcher = /([^\r\n]*)(\r\n|\n|\r|$)/g;
   let match;
