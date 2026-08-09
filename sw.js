@@ -1,10 +1,10 @@
-const CACHE = 'penemue-v18';
+const CACHE = 'penemue-v20';
 const SHELL_ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './assets/css/style.css?v=18',
-  './assets/js/app.js?v=18',
+  './assets/css/style.css?v=20',
+  './assets/js/app.js?v=20',
   './assets/js/github-store.js',
   './assets/js/tasks.js',
   './assets/js/dates.js',
@@ -22,7 +22,10 @@ const SHELL_ASSETS = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(SHELL_ASSETS)));
-  self.skipWaiting();
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
